@@ -1,0 +1,24 @@
+{
+  "name": "aimer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joewang704/aimer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joewang704/aimer/issues"
+  },
+  "homepage": "https://github.com/joewang704/aimer#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "tiny-timer": "^1.6.0"
+  }
+}

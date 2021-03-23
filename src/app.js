@@ -1,25 +1,25 @@
-// Helper functions
-const RADIUS = 5;
-let SENSITIVITY = 0.4;
+import { degToRad } from './utils.js';
+import { drawTargets, spawnTarget } from './target.js';
+import { canvas, ctx, tracker, RADIUS, Cursor } from './globals.js';
+import { Player } from './player.js'
+import './input.js';
 
-function degToRad(degrees) {
-  var result = Math.PI / 180 * degrees;
-  return result;
-}
-
-var canvas = document.querySelector('canvas');
-var ctx = canvas.getContext('2d');
-
-var x = 50;
-var y = 50;
+let SENSITIVITY = .4;
 
 function canvasDraw() {
+  // Clear
   ctx.fillStyle = "grey";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Targets
+  drawTargets(ctx);
+
+  // Cursor
   ctx.fillStyle = "#f00";
   ctx.beginPath();
-  ctx.arc(x, y, RADIUS, 0, degToRad(360), true);
+  ctx.arc(Cursor.x(), Cursor.y(), RADIUS, 0, degToRad(360), true);
   ctx.fill();
+  ctx.closePath();
 }
 
 canvas.requestPointerLock = canvas.requestPointerLock ||
@@ -67,47 +67,47 @@ function lockChangeAlert() {
   }
 }
 
-var tracker = document.getElementById('tracker');
-
-var animation;
 function mouseMove(e) {
   // Edge detection
-  if (x > canvas.width) {
-    x = canvas.width - 1;
+  if (Cursor.x() > canvas.width) {
+    Cursor.setX(canvas.width - 1);
     return
   }
-  if (y > canvas.height) {
-    y = canvas.height - 1;
+  if (Cursor.y() > canvas.height) {
+    Cursor.setY(canvas.height - 1);
     return
   }  
-  if (x < 0) {
-    x = 1;
+  if (Cursor.x() < 0) {
+    Cursor.setX(1);
     return
   }
-  if (y < 0) {
-    y = 1;
+  if (Cursor.y() < 0) {
+    Cursor.setY(1);
     return
   }
-  dx = e.movementX * SENSITIVITY;
-  dy = e.movementY * SENSITIVITY;
-  x += dx;
-  y += dy;
-  tracker.textContent = "X position: " + x + ", Y position: " + y + ", Sensitivity: " + SENSITIVITY;
+  const dx = e.movementX * SENSITIVITY;
+  const dy = e.movementY * SENSITIVITY;
+  Cursor.setX(Cursor.x() + dx);
+  Cursor.setY(Cursor.y() + dy);
 
-  if (!animation) {
-    animation = requestAnimationFrame(function() {
-      animation = null;
-      canvasDraw();
-    });
-  }
+  // tracker.textContent = "X position: " + Cursor.x() + ", Y position: " + Cursor.y() + ", Sensitivity: " + SENSITIVITY;
 }
 
 function setSensitivity(event) {
   sensValue = $('#sens-input').val();
   SENSITIVITY = sensValue;
-  console.log(SENSITIVITY);
   event.preventDefault();
 }
 
 const sensForm = document.getElementById('sens');
 sensForm.addEventListener('submit', setSensitivity);
+
+function gameLoop() {
+  spawnTarget(canvas);
+  canvasDraw();
+  // tracker.textContent = "X position: " + Cursor.x() + ", Y position: " + Cursor.y() + ", Sensitivity: " + SENSITIVITY;
+  tracker.textContent = "Lvl: " + Player.lvl() + ", HP: " + Player.hp() + ", XP: " + Player.xp() + ", XP to level: " + Player.reqXP();
+  window.requestAnimationFrame(gameLoop);
+}
+
+gameLoop();

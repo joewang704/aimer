@@ -15,8 +15,10 @@ html {
 #tracker {
 	position: absolute;
 	top: 0;
-	right: 10px;
+	left: 0px;
+	width: 100%;
 	background-color: white;
+	font-size: 40px;
 }
 
 h1 {
